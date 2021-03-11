@@ -16,10 +16,10 @@ class Orchestrator(override val di: DI) : DIAware {
   
   suspend fun run(scanner: String, rootArtefactsFilter: Set<String>? = null, rootArtefactsExcludeFilter: Set<String>? = null) {
     val scannerService = di.direct.instanceOrNull<MavenScannerService<*>>(scanner)
-  
+
     scannerService?.let {
       logger.info("Scanning repository: $scanner")
-    
+
       val duration = measureTime {
         coroutineScope {
           supervisedLaunch {
