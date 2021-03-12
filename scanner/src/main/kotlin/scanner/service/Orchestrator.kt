@@ -1,20 +1,29 @@
 package scanner.service
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import org.kodein.di.*
-import scanner.util.*
-import kotlin.time.*
+import kamp.domain.MavenArtifact
+import kotlin.time.measureTime
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collect
+import kotlinx.serialization.json.Json
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.direct
+import org.kodein.di.instance
+import org.kodein.di.instanceOrNull
+import scanner.util.LoggerDelegate
+import scanner.util.buildTomlFile
+import scanner.util.supervisedLaunch
 
 class Orchestrator(override val di: DI) : DIAware {
   private val logger by LoggerDelegate()
   private val json by di.instance<Json>()
-  
-  suspend fun run(scanner: String, rootArtefactsFilter: Set<String>? = null, rootArtefactsExcludeFilter: Set<String>? = null) {
+
+  suspend fun run(
+    scanner: String,
+    rootArtefactsFilter: Set<String>? = null,
+    rootArtefactsExcludeFilter: Set<String>? = null
+  ) {
     val scannerService = di.direct.instanceOrNull<MavenScannerService<*>>(scanner)
 
     scannerService?.let {
@@ -25,8 +34,11 @@ class Orchestrator(override val di: DI) : DIAware {
           supervisedLaunch {
             logger.info("Starting $scanner scan")
             val count = scanRepo(scannerService, rootArtefactsFilter, rootArtefactsExcludeFilter)
-            logger.info("Found $count kotlin modules with gradle metadata in $scanner repository filtered by ${rootArtefactsFilter ?: setOf()}, " +
-              "explicitly excluding ${rootArtefactsExcludeFilter ?: setOf()}")
+            logger.info(
+              "Found $count kotlin modules with gradle metadata in $scanner repository " +
+                "filtered by ${rootArtefactsFilter ?: setOf()}, " +
+                "explicitly excluding ${rootArtefactsExcludeFilter ?: setOf()}"
+            )
           }
         }
       }
@@ -35,26 +47,32 @@ class Orchestrator(override val di: DI) : DIAware {
           duration.toComponents { hours, minutes, seconds, nanoseconds ->
             "${hours}h ${minutes}m ${seconds}.${nanoseconds}s"
           }
-        }"
-      )
-    } ?: logger.error("ScannerService for $scanner not found")
+        }")
+    }
+      ?: logger.error("ScannerService for $scanner not found")
   }
-  
-  private suspend fun scanRepo(scanner: MavenScannerService<*>, rootArtefactsFilter: Set<String>? = null, rootArtefactsExcludeFilter: Set<String>? = null): Int {
+
+  private suspend fun scanRepo(
+    scanner: MavenScannerService<*>,
+    rootArtefactsFilter: Set<String>? = null,
+    rootArtefactsExcludeFilter: Set<String>? = null
+  ): Int {
     var count = 0
-    val kamp by di.instance<HttpClient>("kamp")
-    scanner.scanKotlinLibraries(rootArtefactsFilter, rootArtefactsExcludeFilter).buffer().collect { lib ->
-      coroutineScope {
-        supervisedLaunch {
-          count++
-          logger.info(json.encodeToString(lib))
-          kamp.post<Unit>("${PrivateEnv.API_URL}/api/libraries") {
-            body = lib
+
+    val libs = mutableListOf<MavenArtifact>()
+    coroutineScope {
+      with(scanner) { scanMavenArtefacts(rootArtefactsFilter, rootArtefactsExcludeFilter) }
+        .buffer()
+        .collect { lib: MavenArtifact ->
+          supervisedLaunch {
+            count++
+            libs.add(lib)
           }
         }
-      }
     }
-    kamp.close()
+
+    buildTomlFile(libs)
+
     scanner.close()
     return count
   }

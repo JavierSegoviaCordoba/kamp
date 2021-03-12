@@ -1,12 +1,16 @@
 package scanner.service
 
-import kamp.domain.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.*
-import scanner.client.*
-import scanner.processor.*
-import scanner.util.*
-import kotlin.time.*
+import kamp.domain.MavenArtifactImpl
+import kotlin.time.seconds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
+import scanner.client.MavenRepositoryClient
+import scanner.processor.GradleModuleProcessor
+import scanner.processor.PomProcessor
+import scanner.util.supervisedLaunch
 
 class MavenScannerServiceImpl(
   override val client: MavenRepositoryClient<MavenArtifactImpl>,
@@ -32,7 +36,7 @@ class MavenScannerServiceImpl(
     supervisedLaunch {
       var ticks = 0
       do {
-        delay(15.seconds)
+        delay(5.seconds)
         if (pageChannel.isEmpty) {
           logger.info("Page channel empty, ${5 - ticks} ticks remaining until close")
           ticks++
