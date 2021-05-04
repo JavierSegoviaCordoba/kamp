@@ -13,4 +13,5 @@ buildscript {
 bootstrapRefreshVersions()
 
 rootProject.name = "kamp"
+include(":core")
 include(":scanner")

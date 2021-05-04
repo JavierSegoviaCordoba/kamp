@@ -24,6 +24,10 @@ class Orchestrator(override val di: DI) : DIAware {
     rootArtefactsFilter: Set<String>? = null,
     rootArtefactsExcludeFilter: Set<String>? = null
   ) {
+    println("scanner: $scanner")
+    println("filters: $rootArtefactsFilter")
+    println("excludeFilters: $rootArtefactsExcludeFilter")
+
     val scannerService = di.direct.instanceOrNull<MavenScannerService<*>>(scanner)
 
     scannerService?.let {
