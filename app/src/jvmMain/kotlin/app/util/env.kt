@@ -1,6 +1,6 @@
 package app.util
 
-import kamp.util.*
+import kamp.util.Env
 
 
 object PrivateEnv : Env() {

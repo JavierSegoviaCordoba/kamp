@@ -1,8 +1,9 @@
 package scanner.testutil
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import org.jsoup.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import org.jsoup.Jsoup
 
 inline fun <reified T> Any.parseJsonFile(path: String) = this::class.java.classLoader.getResourceAsStream(path).let {
   Json {

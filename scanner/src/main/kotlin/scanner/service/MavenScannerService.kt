@@ -1,13 +1,20 @@
 package scanner.service
 
-import io.ktor.utils.io.core.*
-import kamp.domain.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.*
-import kotlinx.coroutines.flow.*
-import scanner.client.*
-import scanner.processor.*
-import scanner.util.*
+import io.ktor.utils.io.core.Closeable
+import kamp.domain.KotlinMPPLibrary
+import kamp.domain.MavenArtifact
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.receiveAsFlow
+import scanner.client.MavenRepositoryClient
+import scanner.processor.GradleModuleProcessor
+import scanner.processor.PomProcessor
+import scanner.util.LoggerDelegate
+import scanner.util.supervisedLaunch
 
 abstract class MavenScannerService<A : MavenArtifact> : Closeable {
   protected val logger by LoggerDelegate()

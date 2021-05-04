@@ -1,15 +1,18 @@
 package scanner.client
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.utils.io.core.*
-import kamp.domain.*
-import kotlinx.coroutines.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import org.jsoup.nodes.*
-import scanner.domain.*
-import scanner.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.utils.io.core.Closeable
+import kamp.domain.MavenArtifact
+import kamp.domain.MavenArtifactImpl
+import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import org.jsoup.nodes.Document
+import scanner.domain.GradleModule
+import scanner.util.LoggerDelegate
+import scanner.util.asDocument
+import scanner.util.supervisedAsync
 
 abstract class MavenRepositoryClient<A : MavenArtifact>(
   private val defaultRepositoryRootUrl: String,

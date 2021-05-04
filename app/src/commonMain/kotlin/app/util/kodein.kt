@@ -1,8 +1,8 @@
 package app.util
 
-import org.kodein.di.*
-import kotlin.properties.*
-import kotlin.reflect.*
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
+import org.kodein.di.DI
 
 class DIModule(
   private val allowSilentOverride: Boolean = false,

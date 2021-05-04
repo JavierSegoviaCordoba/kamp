@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("multiplatform")
@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
   group = "lt.petuska"
-  version = "0.0.1"
+  version = "0.1.0"
   apply(plugin = "idea")
   idea {
     module {
@@ -30,7 +30,7 @@ allprojects {
       kotlinOptions.jvmTarget = "15"
       kotlinOptions {
         useIR = true
-        jvmTarget = "${JavaVersion.VERSION_15}"
+        jvmTarget = "${JavaVersion.VERSION_11}"
       }
     }
   }

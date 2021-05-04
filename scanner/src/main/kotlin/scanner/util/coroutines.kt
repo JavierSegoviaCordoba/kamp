@@ -1,8 +1,13 @@
 package scanner.util
 
-import io.ktor.client.features.*
-import io.ktor.http.*
-import kotlinx.coroutines.*
+import io.ktor.client.features.ClientRequestException
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 fun <R> CoroutineScope.supervisedAsync(block: suspend CoroutineScope.() -> R): Deferred<R?> = async {
   try {

@@ -1,11 +1,11 @@
 package scanner.processor
 
-import io.kotest.core.spec.style.*
-import io.kotest.matchers.*
-import io.kotest.matchers.collections.*
-import kamp.domain.*
-import scanner.domain.*
-import scanner.testutil.*
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
+import kamp.domain.KotlinTarget
+import scanner.domain.GradleModule
+import scanner.testutil.parseJsonFile
 
 class GradleModuleProcessorTest : FunSpec({
   val module = parseJsonFile<GradleModule>("presenter-middleware-0.2.10.module")

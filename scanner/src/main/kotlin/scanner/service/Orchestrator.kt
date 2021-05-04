@@ -33,7 +33,8 @@ class Orchestrator(override val di: DI) : DIAware {
         coroutineScope {
           supervisedLaunch {
             logger.info("Starting $scanner scan")
-            val count = scanRepo(scannerService, rootArtefactsFilter, rootArtefactsExcludeFilter)
+            val count =
+              scanRepo(scanner, scannerService, rootArtefactsFilter, rootArtefactsExcludeFilter)
             logger.info(
               "Found $count kotlin modules with gradle metadata in $scanner repository " +
                 "filtered by ${rootArtefactsFilter ?: setOf()}, " +
@@ -47,12 +48,14 @@ class Orchestrator(override val di: DI) : DIAware {
           duration.toComponents { hours, minutes, seconds, nanoseconds ->
             "${hours}h ${minutes}m ${seconds}.${nanoseconds}s"
           }
-        }")
+        }"
+      )
     }
       ?: logger.error("ScannerService for $scanner not found")
   }
 
   private suspend fun scanRepo(
+    repo: String,
     scanner: MavenScannerService<*>,
     rootArtefactsFilter: Set<String>? = null,
     rootArtefactsExcludeFilter: Set<String>? = null
@@ -60,8 +63,10 @@ class Orchestrator(override val di: DI) : DIAware {
     var count = 0
 
     val libs = mutableListOf<MavenArtifact>()
+
     coroutineScope {
-      with(scanner) { scanMavenArtefacts(rootArtefactsFilter, rootArtefactsExcludeFilter) }
+      scanner
+        .scanKotlinLibraries(rootArtefactsFilter, rootArtefactsExcludeFilter)
         .buffer()
         .collect { lib: MavenArtifact ->
           supervisedLaunch {
@@ -71,7 +76,7 @@ class Orchestrator(override val di: DI) : DIAware {
         }
     }
 
-    buildTomlFile(libs)
+    buildTomlFile(repo, libs)
 
     scanner.close()
     return count

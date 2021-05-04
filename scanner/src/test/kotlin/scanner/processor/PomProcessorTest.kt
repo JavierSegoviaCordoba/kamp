@@ -1,8 +1,8 @@
 package scanner.processor
 
-import io.kotest.core.spec.style.*
-import io.kotest.matchers.*
-import scanner.testutil.*
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import scanner.testutil.parseXmlFile
 
 class PomProcessorTest : FunSpec({
   val pom = parseXmlFile("presenter-middleware-0.2.10.pom")

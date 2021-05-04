@@ -1,7 +1,7 @@
 package scanner.client
 
-import kamp.domain.*
-import org.jsoup.nodes.*
+import kamp.domain.MavenArtifact
+import org.jsoup.nodes.Document
 
 abstract class AnchorClient<T : MavenArtifact>(
   val url: String,

@@ -1,16 +1,32 @@
 package app.view
 
 
-import app.store.*
-import app.store.thunk.*
-import app.util.*
-import app.view.component.*
-import dev.fritz2.binding.*
-import dev.fritz2.components.*
-import dev.fritz2.dom.*
-import dev.fritz2.dom.html.*
-import dev.fritz2.styling.params.*
-import kotlinx.coroutines.flow.*
+import app.store.LibraryStore
+import app.store.thunk.fetchLibraryCount
+import app.store.thunk.fetchLibraryPage
+import app.util.styled
+import app.view.component.Badge
+import app.view.component.KampIcon
+import app.view.component.Link
+import dev.fritz2.binding.invoke
+import dev.fritz2.binding.storeOf
+import dev.fritz2.components.box
+import dev.fritz2.components.checkbox
+import dev.fritz2.components.clickButton
+import dev.fritz2.components.gridBox
+import dev.fritz2.components.inputField
+import dev.fritz2.components.lineUp
+import dev.fritz2.components.modal
+import dev.fritz2.components.navBar
+import dev.fritz2.components.spinner
+import dev.fritz2.components.stackUp
+import dev.fritz2.dom.html.RenderContext
+import dev.fritz2.dom.states
+import dev.fritz2.styling.params.BasicParams
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 
 @KampComponent
 private fun RenderContext.stackUpClose(style: BasicParams.() -> Unit = {}, children: RenderContext.() -> Unit) = stackUp(style) {

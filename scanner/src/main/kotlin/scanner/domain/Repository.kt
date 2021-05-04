@@ -1,8 +1,11 @@
 package scanner.domain
 
-import kamp.domain.*
-import org.kodein.di.*
-import scanner.client.*
+import kamp.domain.MavenArtifactImpl
+import org.kodein.di.DirectDIAware
+import org.kodein.di.instance
+import scanner.client.ArtifactoryClient
+import scanner.client.JBossClient
+import scanner.client.MavenRepositoryClient
 
 enum class Repository(
   val alias: String,

@@ -1,6 +1,6 @@
 package kamp.domain
 
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 public interface MavenArtifact {
   public val group: String

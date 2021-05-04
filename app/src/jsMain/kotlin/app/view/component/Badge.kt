@@ -1,10 +1,12 @@
 package app.view.component
 
-import app.util.*
-import app.view.*
-import dev.fritz2.dom.html.*
-import dev.fritz2.styling.params.*
-import dev.fritz2.styling.theme.*
+import app.util.styled
+import app.view.KampComponent
+import dev.fritz2.dom.html.RenderContext
+import dev.fritz2.dom.html.Span
+import dev.fritz2.styling.params.BoxParams
+import dev.fritz2.styling.theme.Colors
+import dev.fritz2.styling.theme.Property
 
 @KampComponent
 fun RenderContext.Badge(
@@ -37,4 +39,3 @@ fun RenderContext.Badge(
   color { base }
   style()
 }, content)
-

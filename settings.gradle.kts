@@ -1,4 +1,4 @@
-import de.fayard.refreshVersions.*
+import de.fayard.refreshVersions.bootstrapRefreshVersions
 
 buildscript {
   repositories {
@@ -13,4 +13,4 @@ buildscript {
 bootstrapRefreshVersions()
 
 rootProject.name = "kamp"
-include(":scanner", ":app")
+include(":scanner")

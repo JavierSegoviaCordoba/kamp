@@ -1,6 +1,6 @@
 package scanner.processor
 
-import org.jsoup.nodes.*
+import org.jsoup.nodes.Document
 
 
 class PomProcessor {

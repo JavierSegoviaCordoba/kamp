@@ -1,8 +1,8 @@
 package scanner.client
 
-import io.ktor.client.*
-import kamp.domain.*
-import kotlinx.serialization.json.*
+import io.ktor.client.HttpClient
+import kamp.domain.MavenArtifactImpl
+import kotlinx.serialization.json.Json
 
 class ArtifactoryClient(
   url: String,

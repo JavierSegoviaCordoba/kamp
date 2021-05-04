@@ -5,28 +5,33 @@ package scanner.util
 import java.io.File
 import kamp.domain.MavenArtifact
 
-fun buildTomlFile(libs: List<MavenArtifact>) {
+fun buildTomlFile(repo: String, libs: List<MavenArtifact>) {
 
-  val versionsLines = libs.map { lib -> buildVersionLib(lib) }.sorted()
-  val libsLines = libs.map { lib -> buildLibLine(lib) }.sorted()
+  val versionsLines = libs.map { lib -> buildVersionLib(lib) }.distinct().sorted()
+  val libsLines = libs.map { lib -> buildLibLine(lib) }.distinct().sorted()
 
-  File(
-    "build/catalogs/${libsLines.map { it.first() }.distinct().joinToString("")}.libs.versions.toml"
-  )
-    .apply {
-      parentFile.mkdirs()
-      if (!exists()) createNewFile()
+  val fileName =
+    repo +
+      "-" +
+      libsLines.first().substringBefore(" =").cleanHyphen() +
+      "_" +
+      libsLines.last().substringBefore(" =").cleanHyphen()
 
-      writeText(
-        buildList {
+  File("build/catalogs/$fileName.libs.versions.toml").apply {
+    parentFile.mkdirs()
+    if (!exists()) createNewFile()
+
+    writeText(
+      buildList {
           add("[versions]")
           addAll(versionsLines)
           add("")
           add("[libraries]")
           addAll(libsLines)
         }
-          .joinToString("\n"))
-    }
+        .joinToString("\n")
+    )
+  }
 }
 
 private fun buildVersionLib(lib: MavenArtifact): String {
@@ -43,16 +48,34 @@ private fun buildLibLine(lib: MavenArtifact): String {
 }
 
 private fun buildAlias(lib: MavenArtifact): String {
-  val alias =
-    lib.group.replace(".", "-").replace(":", "-") +
-      "-" +
-      lib.name.cleanHyphen().replace(".", "_").replace(":", "_")
+
+  val domain = lib.group.split(".").take(2).joinToString(".")
+  val groupLessDomain =
+    lib
+      .group
+      .replace("$domain.", "")
+      .replace(".", "-")
+      .replace("_", "-")
+      .replace(":", "-")
+      .cleanHyphen()
+
+  val group = "${domain.replace(".", "-")}-$groupLessDomain"
+  val name =
+    lib
+      .name
+      .replace("$domain.", "")
+      .replace(".", "-")
+      .replace("_", "-")
+      .replace(":", "-")
+      .cleanHyphen(firstLowerCase = lib.group.split(".").size == 2)
+
+  val alias = "$group$name"
 
   with(alias) {
     return if (endsWith("version", true) ||
-      endsWith("versions", true) ||
-      endsWith("bundle", true) ||
-      endsWith("bundles", true)
+        endsWith("versions", true) ||
+        endsWith("bundle", true) ||
+        endsWith("bundles", true)
     ) {
       alias + "_"
     } else {
@@ -62,8 +85,13 @@ private fun buildAlias(lib: MavenArtifact): String {
 }
 
 private fun String.cleanHyphen(firstLowerCase: Boolean = true): String =
-  this.split('-')
-    .joinToString("", transform = String::capitalize)
+  this.split('-').toStringCamelCase(firstLowerCase)
+
+private fun String.cleanUnderscore(firstLowerCase: Boolean = true): String =
+  this.split('_').toStringCamelCase(firstLowerCase)
+
+private fun List<String>.toStringCamelCase(firstLowerCase: Boolean = true): String =
+  joinToString("", transform = String::capitalize)
     .mapIndexed { index: Int, char: Char ->
       if (index == 0 && firstLowerCase) char.toLowerCase() else char
     }

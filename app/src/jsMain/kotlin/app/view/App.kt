@@ -1,8 +1,8 @@
 package app.view
 
-import dev.fritz2.components.*
-import dev.fritz2.dom.html.*
-import dev.fritz2.styling.*
+import dev.fritz2.components.stackUp
+import dev.fritz2.dom.html.RenderContext
+import dev.fritz2.styling.staticStyle
 
 @DslMarker
 annotation class KampComponent

@@ -1,7 +1,7 @@
 package scanner.processor
 
-import kamp.domain.*
-import scanner.domain.*
+import kamp.domain.KotlinTarget
+import scanner.domain.GradleModule
 
 class GradleModuleProcessor {
   val kotlinVersion: String = "1.4.30"

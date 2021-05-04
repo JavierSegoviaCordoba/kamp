@@ -1,9 +1,11 @@
 package scanner
 
-import kotlinx.cli.*
-import scanner.config.*
-import scanner.domain.*
-import scanner.service.*
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.multiple
+import scanner.config.di
+import scanner.domain.Repository
+import scanner.service.Orchestrator
 
 
 suspend fun main(args: Array<String>) {

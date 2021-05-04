@@ -1,13 +1,23 @@
 package app.view.component
 
-import app.util.*
-import app.view.*
-import dev.fritz2.binding.*
-import dev.fritz2.components.*
-import dev.fritz2.dom.html.*
-import dev.fritz2.styling.theme.*
-import kamp.domain.*
-import kotlinx.coroutines.flow.*
+import app.util.styled
+import app.view.KampComponent
+import dev.fritz2.binding.RootStore
+import dev.fritz2.binding.storeOf
+import dev.fritz2.components.box
+import dev.fritz2.components.clickButton
+import dev.fritz2.components.flexBox
+import dev.fritz2.components.icon
+import dev.fritz2.components.lineUp
+import dev.fritz2.components.popover
+import dev.fritz2.components.stackUp
+import dev.fritz2.dom.html.RenderContext
+import dev.fritz2.dom.html.Span
+import dev.fritz2.styling.theme.Colors
+import dev.fritz2.styling.theme.Property
+import kamp.domain.KotlinMPPLibrary
+import kamp.domain.KotlinTarget
+import kotlinx.coroutines.flow.map
 
 
 private val String.badgeColor: Colors.() -> Property
