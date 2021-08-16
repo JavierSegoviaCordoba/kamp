@@ -1,7 +1,6 @@
 package scanner.service
 
 import kamp.domain.MavenArtifactImpl
-import kotlin.time.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -36,7 +35,7 @@ class MavenScannerServiceImpl(
     supervisedLaunch {
       var ticks = 0
       do {
-        delay(5.seconds)
+        delay(5000)
         if (pageChannel.isEmpty) {
           logger.info("Page channel empty, ${5 - ticks} ticks remaining until close")
           ticks++
