@@ -58,22 +58,6 @@ private fun buildAlias(lib: MavenArtifact): String {
       .replace("_", "-")
       .replace(":", "-")
       .cleanHyphen()
-      .run {
-        if (listOf(
-            "version",
-            "versions",
-            "bundle",
-            "bundles",
-            "plugin",
-            "plugins",
-          )
-            .any { bannedKey -> this.endsWith(bannedKey, ignoreCase = true) }
-        ) {
-          this + "X"
-        } else {
-          this
-        }
-      }
 
   val group = "${domain.replace(".", "-")}-$groupLessDomain"
   val name =
@@ -87,15 +71,20 @@ private fun buildAlias(lib: MavenArtifact): String {
 
   val alias = "$group$name"
 
-  with(alias) {
-    return if (endsWith("version", true) ||
-        endsWith("versions", true) ||
-        endsWith("bundle", true) ||
-        endsWith("bundles", true)
+  return alias.run {
+    if (listOf(
+        "version",
+        "versions",
+        "bundle",
+        "bundles",
+        "plugin",
+        "plugins",
+      )
+        .any { bannedKey -> this.endsWith(bannedKey, ignoreCase = true) }
     ) {
-      alias + "_"
+      this + "X"
     } else {
-      alias
+      this
     }
   }
 }
