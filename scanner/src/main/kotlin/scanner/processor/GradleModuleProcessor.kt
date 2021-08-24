@@ -4,7 +4,7 @@ import kamp.domain.KotlinTarget
 import scanner.domain.GradleModule
 
 class GradleModuleProcessor {
-  val kotlinVersion: String = "1.4.30"
+  val kotlinVersion: String = "1.5.30"
   
   val GradleModule.isRootModule get() = component?.url == null
   

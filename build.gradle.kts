@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
   group = "lt.petuska"
-  version = "0.1.1"
+  version = "0.1.2"
   apply(plugin = "idea")
   repositories {
     mavenCentral()

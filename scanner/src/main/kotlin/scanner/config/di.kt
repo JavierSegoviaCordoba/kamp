@@ -20,7 +20,7 @@ import scanner.util.*
 
 
 fun HttpClientConfig<CIOEngineConfig>.baseConfig() {
-  val timeout = 2.5.minutes.inMilliseconds.toLong()
+  val timeout = 150_000L
   engine {
     requestTimeout = timeout
   }
