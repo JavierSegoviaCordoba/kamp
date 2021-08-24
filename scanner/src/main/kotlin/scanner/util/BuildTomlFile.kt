@@ -50,7 +50,7 @@ private fun buildLibLine(lib: MavenArtifact): String {
 private fun buildAlias(lib: MavenArtifact): String {
 
   val domain = lib.group.split(".").take(2).joinToString(".")
-  val groupLessDomain =
+  val groupLessDomain: String =
     lib
       .group
       .replace("$domain.", "")
@@ -58,6 +58,22 @@ private fun buildAlias(lib: MavenArtifact): String {
       .replace("_", "-")
       .replace(":", "-")
       .cleanHyphen()
+      .run {
+        if (listOf(
+            "version",
+            "versions",
+            "bundle",
+            "bundles",
+            "plugin",
+            "plugins",
+          )
+            .any { bannedKey -> this.endsWith(bannedKey, ignoreCase = true) }
+        ) {
+          this + "X"
+        } else {
+          this
+        }
+      }
 
   val group = "${domain.replace(".", "-")}-$groupLessDomain"
   val name =
