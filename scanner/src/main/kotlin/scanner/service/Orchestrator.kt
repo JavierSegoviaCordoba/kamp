@@ -1,6 +1,7 @@
 package scanner.service
 
 import kamp.domain.MavenArtifact
+import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.buffer
@@ -33,7 +34,7 @@ class Orchestrator(override val di: DI) : DIAware {
     scannerService?.let {
       logger.info("Scanning repository: $scanner")
 
-      val duration = measureTime {
+      val duration = measureTimeMillis {
         coroutineScope {
           supervisedLaunch {
             logger.info("Starting $scanner scan")
@@ -48,11 +49,7 @@ class Orchestrator(override val di: DI) : DIAware {
         }
       }
       logger.info(
-        "Finished scanning $scanner in ${
-          duration.toComponents { hours, minutes, seconds, nanoseconds ->
-            "${hours}h ${minutes}m ${seconds}.${nanoseconds}s"
-          }
-        }"
+        "Finished scanning $scanner in ${(duration/1000)/60} minutes"
       )
     }
       ?: logger.error("ScannerService for $scanner not found")

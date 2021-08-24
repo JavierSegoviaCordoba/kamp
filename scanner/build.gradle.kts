@@ -26,7 +26,6 @@ kotlin {
     languageSettings.apply {
       useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
       useExperimentalAnnotation("io.ktor.util.KtorExperimentalAPI")
-      useExperimentalAnnotation("kotlin.time.ExperimentalTime")
       useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
       useExperimentalAnnotation("kotlinx.cli.ExperimentalCli")
     }

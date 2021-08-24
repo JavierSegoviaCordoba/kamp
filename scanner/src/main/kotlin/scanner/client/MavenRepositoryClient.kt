@@ -21,23 +21,23 @@ abstract class MavenRepositoryClient<A : MavenArtifact>(
   protected abstract val client: HttpClient
   protected abstract val json: Json
   private val logger by LoggerDelegate()
-  
+
   private val A.mavenModuleRootUrl: String
     get() = "$defaultRepositoryRootUrl/${group.replace(".", "/")}/$name"
   private val A.mavenModuleVersionUrl: String
     get() = "$mavenModuleRootUrl/$releaseVersion"
-  
+
   suspend fun getArtifactDetails(pathToMavenMetadata: String): MavenArtifactImpl? =
     coroutineScope {
       val artifact = supervisedAsync {
         val url = "$defaultRepositoryRootUrl$pathToMavenMetadata"
         val pom = client.get<String>(url).asDocument()
-        val doc = pom.getElementsByTag("metadata").first()
+        val doc = pom.getElementsByTag("metadata").first() ?: error("doc can't be null")
         try {
           MavenArtifactImpl(
-            group = doc.selectFirst("groupId").text(),
-            name = doc.selectFirst("artifactId").text(),
-            latestVersion = doc.selectFirst("versioning>latest")?.text() ?: doc.selectFirst("version").text(),
+            group = doc.selectFirst("groupId")!!.text(),
+            name = doc.selectFirst("artifactId")!!.text(),
+            latestVersion = doc.selectFirst("versioning>latest")?.text() ?: doc.selectFirst("version")!!.text(),
             releaseVersion = doc.selectFirst("versioning>release")?.text(),
             versions = doc.selectFirst("versioning>versions")?.children()?.map { v -> v.text() },
             lastUpdated = doc.selectFirst("versioning>lastUpdated")?.text()?.toLongOrNull(),
@@ -49,23 +49,23 @@ abstract class MavenRepositoryClient<A : MavenArtifact>(
           null
         }
       }
-      
+
       artifact.await()
     }
-  
+
   suspend fun getGradleModule(artifact: A): GradleModule? = coroutineScope {
     supervisedAsync {
       val module = client.get<String>("${artifact.mavenModuleVersionUrl}/${artifact.name}-${artifact.releaseVersion}.module")
       json.decodeFromString<GradleModule>(module)
     }.await()
   }
-  
+
   suspend fun getMavenPom(artifact: A): Document? = coroutineScope {
     supervisedAsync {
       client.get<String>("${artifact.mavenModuleVersionUrl}/${artifact.name}-${artifact.releaseVersion}.pom").asDocument()
     }.await()
   }
-  
+
   suspend fun listRepositoryPath(path: String): List<RepoItem>? = coroutineScope {
     supervisedAsync {
       client.get<String>("$defaultRepositoryRootUrl${path.removeSuffix("/")}/").let { str ->
@@ -73,15 +73,15 @@ abstract class MavenRepositoryClient<A : MavenArtifact>(
       }
     }.await()
   }
-  
+
   override fun close() = client.close()
-  
+
   class RepoItem(val value: String, path: String) {
     val parentPath = "/${path.removeSuffix("/").removePrefix("/")}"
     val path = "${if (parentPath == "/") "" else parentPath}/$value".removeSuffix("/")
     val isDirectory = value.endsWith("/")
     val isFile = !isDirectory
-    
+
     override fun toString() = value
   }
 }

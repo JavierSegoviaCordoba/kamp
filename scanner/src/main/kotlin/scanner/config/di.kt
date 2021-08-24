@@ -9,7 +9,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlin.time.*
 import org.kodein.di.*
 import scanner.client.*
 import scanner.domain.*
