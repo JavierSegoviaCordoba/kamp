@@ -89,7 +89,7 @@ private fun buildAlias(lib: MavenArtifact): String {
   }
 }
 
-private fun String.cleanHyphen(firstLowerCase: Boolean = true): String =
+internal fun String.cleanHyphen(firstLowerCase: Boolean = true): String =
   this.split('-').toStringCamelCase(firstLowerCase)
 
 private fun String.cleanUnderscore(firstLowerCase: Boolean = true): String =

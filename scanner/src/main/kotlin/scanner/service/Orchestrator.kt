@@ -2,7 +2,6 @@ package scanner.service
 
 import kamp.domain.MavenArtifact
 import kotlin.system.measureTimeMillis
-import kotlin.time.measureTime
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
@@ -13,6 +12,7 @@ import org.kodein.di.direct
 import org.kodein.di.instance
 import org.kodein.di.instanceOrNull
 import scanner.util.LoggerDelegate
+import scanner.util.buildTextFile
 import scanner.util.buildTomlFile
 import scanner.util.supervisedLaunch
 
@@ -77,6 +77,7 @@ class Orchestrator(override val di: DI) : DIAware {
         }
     }
 
+    buildTextFile(repo, libs)
     buildTomlFile(repo, libs)
 
     scanner.close()
